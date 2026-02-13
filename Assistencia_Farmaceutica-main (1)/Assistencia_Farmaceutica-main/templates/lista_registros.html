@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tempo Restante dos Medicamentos</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th, td {
+            padding: 18px 20px;
+            text-align: left;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f4f4ff;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Tempo Restante dos Medicamentos</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Paciente</th>
+                    <th>Telefone</th>
+                    <th>Medicamento</th>
+                    <th>Tempo Restante</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for r in registros %}
+                <tr>
+                    <td>{{ r.paciente }}</td>
+                    <td>{{ r.telefone }}</td>
+                    <td>{{ r.medicamento }}</td>
+                    <td>{{ r.restante }} dia{{ 's' if r.restante != 1 else '' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="/" class="back-link">← Voltar</a>
+    </div>
+</body>
+</html>

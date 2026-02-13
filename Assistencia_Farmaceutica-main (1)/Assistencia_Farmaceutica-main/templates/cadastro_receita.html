@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Receita</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .items-section {
+            margin-top: 40px;
+            border-top: 2px solid #f0f0f0;
+            padding-top: 30px;
+        }
+
+        .items-section h3 {
+            color: #555;
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        /* --- ESTILO DOS BLOCOS DE CADASTRO DO ITEM --- */
+        #medicamento-form-bloco {
+            background: #f8f9ff;
+            border: 2px solid #e8f0ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        /* Grid para os campos do item */
+        .medicamento-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr; /* 3 colunas */
+            gap: 15px;
+        }
+        
+        .medicamento-grid .full-width {
+            grid-column: 1 / -1; /* Ocupa a linha inteira */
+        }
+        /* --- FIM DOS ESTILOS --- */
+
+
+        #lista-medicamentos-resumo {
+            margin-top: 20px;
+        }
+        
+        .resumo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+        }
+
+        .resumo-item p {
+            color: #333;
+            margin: 0;
+            word-break: break-word; 
+        }
+        
+        .btn-remover-lista {
+            background: #f8d7da;
+            color: #721c24;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            margin-left: 15px;
+        }
+        .btn-remover-lista:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-adicionar {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+        .btn-adicionar:hover {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 40px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sistema de Atenção Farmacêutica</h1>
+            <h2>Cadastrar Nova Receita</h2>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {# Verificar a necessidade desse bloco acima #}
+
+        {% if not pacientes or pacientes|length == 0 %}
+            <div class="no-patients-warning">
+                <p>⚠️ Não há pacientes cadastrados no sistema!</p>
+                <p>É necessário cadastrar pelo menos um paciente antes de criar uma receita.</p>
+                <a href="/cadastrar_paciente" class="btn-warning">Cadastrar Primeiro Paciente</a>
+            </div>
+        {% else %}
+            
+            <form action="/salvar_receita" method="post" id="formReceita">
+                
+                <div class="form-group">
+                    <label for="paciente_id">Paciente:</label>
+                    <select name="paciente_id" id="paciente_id" required>
+                        <option value="">Selecione um paciente</option>
+                        {% for p in pacientes %}
+                            <option value="{{ p.id }}">#{{ p.id }} - {{ p.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="nome_medico">Nome do Médico:</label>
+                    <input type="text" id="nome_medico" name="nome_medico" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="crm_medico">CRM do Médico:</label>
+                        <input type="text" id="crm_medico" name="crm_medico" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="data_emissao">Data de Emissão:</label>
+                        <input type="date" id="data_emissao" name="data_emissao" required>
+                    </div>
+                </div>
+
+                <div class="items-section">
+                    <h3>Itens da Receita</h3>
+                    
+                    <div id="medicamento-form-bloco">
+                        <div class="medicamento-grid">
+                            
+                            <div class="form-group full-width">
+                                <label for="item_nome">Nome do Medicamento/Item:</label>
+                                <input type="text" id="item_nome" placeholder="Digite o nome (ex: Dipirona)">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Dose</label>
+                                <div class="form-row">
+                                    <input type="number" id="item_dose_num" placeholder="Qtd." min="1">
+                                    <input type="text" id="item_dose_unidade" placeholder="Unid. (ex: mg)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Frequência</label>
+                                <input type="number" id="item_frequencia_horas" placeholder="Intervalo (em horas)">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Duração</label>
+                                <input type="number" id="item_duracao_dia" placeholder="Total (em dias)">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Uso Contínuo?</label>
+                                <select id="item_uso_continuo">
+                                    <option value="Nao" selected>Não</option>
+                                    <option value="Sim">Sim</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label>Posologia (Observações)</label>
+                                <input type="text" id="item_posologia" placeholder="Ex: Tomar após as refeições">
+                            </div>
+                        </div>
+
+                         <button type="button" class="btn-adicionar" onclick="adicionarItemNaLista()">
+                            + Adicionar Item na Lista
+                        </button>
+                    </div>
+
+                    
+                    <div id="lista-medicamentos-resumo">
+                        </div>
+
+                    <div id="dados-ocultos-itens">
+                        </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Salvar Receita Completa</button>
+            </form>
+        {% endif %}
+
+        <a href="/" class="back-link">← Voltar para o início</a>
+    </div>
+
+
+    <script>
+        // Define a data de hoje como padrão
+        document.addEventListener('DOMContentLoaded', function() {
+            const hoje = new Date().toISOString().split('T')[0];
+            const campoData = document.getElementById('data_emissao');
+            if(campoData) {
+                campoData.value = hoje;
+            }
+        });
+
+        // Variável para contar os itens (e dar IDs únicos)
+        let itemCounter = 0;
+
+        // Função para ADICIONAR na lista de resumo
+        function adicionarItemNaLista() {
+            
+            // 1. Pegar os valores de todos os blocos
+            const nome = document.getElementById('item_nome').value.trim();
+            const doseNum = document.getElementById('item_dose_num').value.trim();
+            const doseUnid = document.getElementById('item_dose_unidade').value.trim();
+            const freq = document.getElementById('item_frequencia_horas').value.trim();
+            const duracao = document.getElementById('item_duracao_dia').value.trim();
+            const usoContinuo = document.getElementById('item_uso_continuo').value;
+            const posologia = document.getElementById('item_posologia').value.trim();
+
+            
+            if (!nome) {
+                alert('Pelo menos o nome do medicamento é obrigatório.');
+                return;
+            }
+
+            // 3. Montar a *descrição de texto*
+            // O JavaScript vai juntar tudo em uma única string
+            let descricaoFinal = nome;
+            
+            if (doseNum || doseUnid) {
+                descricaoFinal += ` - ${doseNum || ''} ${doseUnid || ''}`;
+            }
+            if (freq) {
+                descricaoFinal += `, de ${freq} em ${freq} horas`;
+            }
+            if (duracao) {
+                descricaoFinal += ` por ${duracao} dias`;
+            }
+            if (usoContinuo === 'Sim') {
+                descricaoFinal += " (Uso Contínuo)";
+            }
+            if (posologia) {
+                descricaoFinal += ` - ${posologia}`;
+            }
+
+            // 4. Criar o item de resumo (com a string combinada)
+            const listaResumo = document.getElementById('lista-medicamentos-resumo');
+            const itemResumo = document.createElement('div');
+            itemResumo.className = 'resumo-item';
+            itemResumo.id = 'item_resumo_' + itemCounter;
+            
+            itemResumo.innerHTML = `
+                <p>${descricaoFinal}</p> <button type="button" class="btn-remover-lista" onclick="removerItem('${itemCounter}')">&times;</button>
+            `;
+            listaResumo.appendChild(itemResumo);
+
+            // 5. Criar o input escondido (com a string combinada)
+            // É isso que o backend vai ler!
+            const containerOculto = document.getElementById('dados-ocultos-itens');
+            const itemOculto = document.createElement('div');
+            itemOculto.id = 'item_oculto_' + itemCounter;
+            
+            // Usamos 'value.replace(/"/g, "&quot;")' para evitar que aspas quebrem o HTML
+            const valorSeguro = descricaoFinal.replace(/"/g, "&quot;");
+            
+            itemOculto.innerHTML = `
+                <input type="hidden" name="descricao_item" value="${valorSeguro}">
+            `;
+            containerOculto.appendChild(itemOculto);
+
+            // 6. Limpar o formulário para o próximo item
+            document.getElementById('item_nome').value = '';
+            document.getElementById('item_dose_num').value = '';
+            document.getElementById('item_dose_unidade').value = '';
+            document.getElementById('item_frequencia_horas').value = '';
+            document.getElementById('item_duracao_dia').value = '';
+            document.getElementById('item_uso_continuo').value = 'Nao';
+            document.getElementById('item_posologia').value = '';
+            
+            document.getElementById('item_nome').focus();
+
+            itemCounter++;
+        }
+
+        function removerItem(itemId) {
+            // Remove da lista de resumo
+            const itemResumo = document.getElementById('item_resumo_' + itemId); // <-- CORRIGIDO
+            if (itemResumo) {
+                itemResumo.remove();
+            }
+
+            const itemOculto = document.getElementById('item_oculto_' + itemId); // <-- CORRIGIDO
+            if (itemOculto) {
+                itemOculto.remove();
+            }
+        }
+    </script>
+</body>
+</html>

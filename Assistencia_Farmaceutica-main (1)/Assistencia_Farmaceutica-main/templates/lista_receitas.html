@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Receitas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        /* ... (Seu CSS de 'flash-messages' e 'empty-state') ... */
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        th {
+            color: white;
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+            /* Alinha verticalmente no topo */
+            vertical-align: top;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9ff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* --- NOVO ESTILO PARA A LISTA DE ITENS --- */
+        .itens-list {
+            padding-left: 10px;
+        }
+        
+        .itens-list ul {
+            margin: 0;
+            padding-left: 20px; /* Adiciona a bolinha (bullet) */
+        }
+
+        .itens-list li {
+            color: #555;
+            margin-bottom: 8px; /* Espaçamento entre os itens */
+            font-size: 0.95em;
+        }
+        .itens-list li:last-child {
+            margin-bottom: 0;
+        }
+        /* --- FIM DO NOVO ESTILO --- */
+
+        .receita-id {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        .medico-info {
+            font-weight: 600;
+        }
+        .medico-info small {
+            display: block;
+            font-weight: 400;
+            color: #777;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Receitas Cadastradas</h1>
+        </div>
+
+        {% if receitas_cadastradas %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Paciente</th>
+                            <th>Médico / CRM</th>
+                            <th>Data</th>
+                            <th style="width: 40%;">Itens da Receita</th>
+                            
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for receita in receitas_cadastradas %}
+                        <tr>
+                            <td>
+                                <span class="receita-id">#{{ receita.id }}</span>
+                            </td>
+                            <td>
+                                {% for p in pacientes_cadastrados %}
+                                    {% if p.id == receita.paciente_id %}
+                                        <strong>{{ p.nome }}</strong>
+                                        <br><small>ID: #{{ p.id }}</small>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <span class="medico-info">
+                                    {{ receita.nome_medico }}
+                                    <small>{{ receita.crm_medico }}</small>
+                                </span>
+                            </td>
+                            <td>{{ receita.data_emissao }}</td>
+                            
+                            <td class="itens-list">
+                                <ul>
+                                    {% for item in itens_cadastrados %}
+                                        {% if item.receita_id == receita.id %}
+                                            <li>{{ item.descricao }}</li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td><a href="{{url_for('deletar',id=receita.id, table='receita')}}">Deletar</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            {% endif %}
+
+        <a href="/" class="back-link">← Voltar para o início</a>
+    </div>
+</body>
+</html>
